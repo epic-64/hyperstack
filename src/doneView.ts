@@ -1,5 +1,5 @@
 import type { TodoItem } from './db';
-import { deleteTodo, getCompletedTodos } from './todos';
+import { deleteTodo, getCompletedTodos, toggleTodo } from './todos';
 
 export const createDoneView = async (): Promise<HTMLElement> => {
   const container = document.createElement('div');
@@ -54,6 +54,22 @@ const createCompletedTodoItem = (todo: TodoItem, onUpdate: () => Promise<void>):
     completedDate.textContent = date.toLocaleDateString();
   }
 
+  const reopenButton = document.createElement('button');
+  reopenButton.className = 'reopen-button';
+  reopenButton.textContent = '↶';
+  reopenButton.setAttribute('aria-label', `Reopen "${todo.title}"`);
+
+  reopenButton.addEventListener('click', async () => {
+    if (todo.id !== undefined) {
+      try {
+        await toggleTodo(todo.id);
+        await onUpdate();
+      } catch (error) {
+        console.error('Failed to reopen todo:', error);
+      }
+    }
+  });
+
   const deleteButton = document.createElement('button');
   deleteButton.className = 'delete-button';
   deleteButton.textContent = '×';
@@ -72,6 +88,7 @@ const createCompletedTodoItem = (todo: TodoItem, onUpdate: () => Promise<void>):
 
   li.appendChild(label);
   li.appendChild(completedDate);
+  li.appendChild(reopenButton);
   li.appendChild(deleteButton);
 
   return li;
