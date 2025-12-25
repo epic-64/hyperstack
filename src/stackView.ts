@@ -95,6 +95,19 @@ const createTodoItem = (todo: TodoItem, onUpdate: () => Promise<void>): HTMLElem
   label.htmlFor = `todo-${todo.id}`;
   label.textContent = todo.title;
 
+  const durationBadge = document.createElement('span');
+  durationBadge.className = 'duration-badge';
+  if (todo.duration !== undefined && todo.endDate !== undefined) {
+    const endDate = new Date(todo.endDate);
+    const today = new Date();
+    const isOverdue = endDate < today && !todo.completed;
+    durationBadge.textContent = `${todo.duration}d → ${endDate.toLocaleDateString()}`;
+    if (isOverdue) {
+      durationBadge.style.color = 'rgba(255, 100, 100, 0.9)';
+      durationBadge.style.borderColor = 'rgba(255, 100, 100, 0.5)';
+    }
+  }
+
   const deleteButton = document.createElement('button');
   deleteButton.className = 'delete-button';
   deleteButton.textContent = '×';
@@ -129,6 +142,9 @@ const createTodoItem = (todo: TodoItem, onUpdate: () => Promise<void>): HTMLElem
 
   li.appendChild(checkbox);
   li.appendChild(label);
+  if (todo.duration !== undefined && todo.endDate !== undefined) {
+    li.appendChild(durationBadge);
+  }
   li.appendChild(deleteButton);
 
   return li;
