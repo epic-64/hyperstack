@@ -59,9 +59,13 @@ export const createStackView = async (): Promise<HTMLElement> => {
     const titleText = input.value.trim();
     if (!titleText) return;
 
-    await addTodo(titleText);
-    input.value = '';
-    await renderTodos();
+    try {
+      await addTodo(titleText);
+      input.value = '';
+      await renderTodos();
+    } catch (error) {
+      console.error('Failed to add todo:', error);
+    }
   });
 
   header.appendChild(form);
@@ -97,15 +101,24 @@ const createTodoItem = (todo: TodoItem, onUpdate: () => Promise<void>): HTMLElem
 
   checkbox.addEventListener('change', async () => {
     if (todo.id !== undefined) {
-      await toggleTodo(todo.id);
-      await onUpdate();
+      try {
+        await toggleTodo(todo.id);
+        await onUpdate();
+      } catch (error) {
+        console.error('Failed to toggle todo:', error);
+        checkbox.checked = !checkbox.checked;
+      }
     }
   });
 
   deleteButton.addEventListener('click', async () => {
     if (todo.id !== undefined) {
-      await deleteTodo(todo.id);
-      await onUpdate();
+      try {
+        await deleteTodo(todo.id);
+        await onUpdate();
+      } catch (error) {
+        console.error('Failed to delete todo:', error);
+      }
     }
   });
 

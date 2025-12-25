@@ -61,8 +61,12 @@ const createCompletedTodoItem = (todo: TodoItem, onUpdate: () => Promise<void>):
 
   deleteButton.addEventListener('click', async () => {
     if (todo.id !== undefined) {
-      await deleteTodo(todo.id);
-      await onUpdate();
+      try {
+        await deleteTodo(todo.id);
+        await onUpdate();
+      } catch (error) {
+        console.error('Failed to delete todo:', error);
+      }
     }
   });
 

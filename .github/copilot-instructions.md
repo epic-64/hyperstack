@@ -20,4 +20,7 @@ Additional considerations:
 - Write pure functions as much as possible. (Functional Core, Imperative Shell)
 - Instead of comments, write clear and self-explanatory code and unit tests.
 
+Additional rules:
+- You will never try to run the app yourself. You can run the test suite however.
+
 Let's go!!!
