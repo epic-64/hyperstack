@@ -1,5 +1,8 @@
 hyperstack is a todo-list application for my personal use.
 
+## State
+Early development, not ready for use.
+
 ## Characteristics
 - Opinionated todo management with recurring tasks, blueprints and analytics
 - Fully web-based, no installation required, runs in any modern browser
