@@ -8,13 +8,16 @@ export interface TodoItem {
   completedAt?: number;
 }
 
-const db = new Dexie('HyperstackDB') as Dexie & {
-  todos: EntityTable<TodoItem, 'id'>;
-};
+class HyperstackDB extends Dexie {
+  todos!: EntityTable<TodoItem, 'id'>;
 
-db.version(1).stores({
-  todos: '++id, completed, createdAt, completedAt',
-});
+  constructor() {
+    super('HyperstackDB');
+    this.version(1).stores({
+      todos: '++id, completed, createdAt, completedAt',
+    });
+  }
+}
 
-export { db };
+export const db = new HyperstackDB();
 

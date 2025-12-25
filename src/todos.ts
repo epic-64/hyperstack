@@ -1,11 +1,12 @@
 import { db, type TodoItem } from './db';
 
 export const addTodo = async (title: string): Promise<number> => {
-  return await db.todos.add({
+  const id = await db.todos.add({
     title,
     completed: false,
     createdAt: Date.now(),
   });
+  return id;
 };
 
 export const toggleTodo = async (id: number): Promise<void> => {
