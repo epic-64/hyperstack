@@ -5,6 +5,7 @@ import {
   getBlueprints,
 } from './blueprints';
 import { addTodoFromBlueprint } from './todos';
+import { createNumberPicker, createToggle } from './components';
 
 export const createBlueprintsView = (): HTMLElement => {
   const container = document.createElement('div');
@@ -28,23 +29,22 @@ export const createBlueprintsView = (): HTMLElement => {
   titleInput.setAttribute('aria-label', 'Blueprint title');
   titleInput.required = true;
 
-  const durationInput = document.createElement('input');
-  durationInput.type = 'number';
-  durationInput.className = 'duration-input';
-  durationInput.placeholder = 'Days';
-  durationInput.setAttribute('aria-label', 'Duration in days');
-  durationInput.min = '1';
+  const titleRow = document.createElement('div');
+  titleRow.className = 'form-row';
+  titleRow.appendChild(titleInput);
 
-  const recurCheckbox = document.createElement('input');
-  recurCheckbox.type = 'checkbox';
-  recurCheckbox.className = 'recur-checkbox';
-  recurCheckbox.id = 'new-blueprint-recur';
+  const optionsRow = document.createElement('div');
+  optionsRow.className = 'form-row form-options';
 
-  const recurLabel = document.createElement('label');
-  recurLabel.htmlFor = 'new-blueprint-recur';
-  recurLabel.className = 'recur-label';
-  recurLabel.textContent = '↻';
-  recurLabel.title = 'Recurring';
+  const hasDurationToggle = createToggle('Duration', false);
+  const durationPicker = createNumberPicker('days', 1, 365, 7);
+  durationPicker.element.style.display = 'none';
+
+  hasDurationToggle.onChange((enabled) => {
+    durationPicker.element.style.display = enabled ? 'flex' : 'none';
+  });
+
+  const recurToggle = createToggle('Recurring', false);
 
   const addButton = document.createElement('button');
   addButton.type = 'submit';
@@ -52,11 +52,13 @@ export const createBlueprintsView = (): HTMLElement => {
   addButton.className = 'add-button';
   addButton.setAttribute('aria-label', 'Add blueprint');
 
-  form.appendChild(titleInput);
-  form.appendChild(durationInput);
-  form.appendChild(recurLabel);
-  form.appendChild(recurCheckbox);
-  form.appendChild(addButton);
+  optionsRow.appendChild(hasDurationToggle.element);
+  optionsRow.appendChild(durationPicker.element);
+  optionsRow.appendChild(recurToggle.element);
+  optionsRow.appendChild(addButton);
+
+  form.appendChild(titleRow);
+  form.appendChild(optionsRow);
 
   header.appendChild(form);
 
@@ -88,11 +90,12 @@ export const createBlueprintsView = (): HTMLElement => {
     if (!titleText) return;
 
     try {
-      const duration = durationInput.value ? parseInt(durationInput.value) : undefined;
-      await addBlueprint(titleText, duration, recurCheckbox.checked);
+      const hasDuration = hasDurationToggle.getValue();
+      const duration = hasDuration ? durationPicker.getValue() : undefined;
+      const recur = recurToggle.getValue();
+
+      await addBlueprint(titleText, duration, recur);
       titleInput.value = '';
-      durationInput.value = '';
-      recurCheckbox.checked = false;
       await renderBlueprints();
     } catch (error) {
       console.error('Failed to add blueprint:', error);
