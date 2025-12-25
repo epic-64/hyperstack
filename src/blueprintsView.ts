@@ -3,6 +3,7 @@ import {
   addBlueprint,
   deleteBlueprint,
   getBlueprints,
+  updateBlueprint,
 } from './blueprints';
 import { addTodoFromBlueprint } from './todos';
 import { createNumberPicker, createToggle } from './components';
@@ -19,7 +20,7 @@ export const createBlueprintsView = (): HTMLElement => {
   header.appendChild(title);
 
   const form = document.createElement('form');
-  form.className = 'add-blueprint-form';
+  form.className = 'add-todo-form';
   form.setAttribute('aria-label', 'Add new blueprint');
 
   const titleInput = document.createElement('input');
@@ -29,36 +30,14 @@ export const createBlueprintsView = (): HTMLElement => {
   titleInput.setAttribute('aria-label', 'Blueprint title');
   titleInput.required = true;
 
-  const titleRow = document.createElement('div');
-  titleRow.className = 'form-row';
-  titleRow.appendChild(titleInput);
-
-  const optionsRow = document.createElement('div');
-  optionsRow.className = 'form-row form-options';
-
-  const hasDurationToggle = createToggle('Duration', false);
-  const durationPicker = createNumberPicker('days', 1, 365, 7);
-  durationPicker.element.style.display = 'none';
-
-  hasDurationToggle.onChange((enabled) => {
-    durationPicker.element.style.display = enabled ? 'flex' : 'none';
-  });
-
-  const recurToggle = createToggle('Recurring', false);
-
   const addButton = document.createElement('button');
   addButton.type = 'submit';
   addButton.textContent = '+';
   addButton.className = 'add-button';
   addButton.setAttribute('aria-label', 'Add blueprint');
 
-  optionsRow.appendChild(hasDurationToggle.element);
-  optionsRow.appendChild(durationPicker.element);
-  optionsRow.appendChild(recurToggle.element);
-  optionsRow.appendChild(addButton);
-
-  form.appendChild(titleRow);
-  form.appendChild(optionsRow);
+  form.appendChild(titleInput);
+  form.appendChild(addButton);
 
   header.appendChild(form);
 
@@ -90,11 +69,7 @@ export const createBlueprintsView = (): HTMLElement => {
     if (!titleText) return;
 
     try {
-      const hasDuration = hasDurationToggle.getValue();
-      const duration = hasDuration ? durationPicker.getValue() : undefined;
-      const recur = recurToggle.getValue();
-
-      await addBlueprint(titleText, duration, recur);
+      await addBlueprint(titleText, 7, true);
       titleInput.value = '';
       await renderBlueprints();
     } catch (error) {
@@ -118,9 +93,13 @@ const createBlueprintItem = (
   li.className = 'todo-item blueprint-item';
   li.setAttribute('role', 'listitem');
 
+  const blueprintRow = document.createElement('div');
+  blueprintRow.className = 'task-row';
+
   const label = document.createElement('span');
   label.className = 'todo-label';
   label.textContent = blueprint.title;
+  label.style.cursor = 'pointer';
 
   const durationBadge = document.createElement('span');
   durationBadge.className = 'duration-badge';
@@ -141,7 +120,90 @@ const createBlueprintItem = (
   createTaskButton.setAttribute('aria-label', `Create task from "${blueprint.title}"`);
   createTaskButton.title = 'Create task';
 
-  createTaskButton.addEventListener('click', async () => {
+  const deleteButton = document.createElement('button');
+  deleteButton.className = 'delete-button';
+  deleteButton.textContent = '×';
+  deleteButton.setAttribute('aria-label', `Delete "${blueprint.title}"`);
+
+  blueprintRow.appendChild(label);
+  if (blueprint.duration !== undefined) {
+    blueprintRow.appendChild(durationBadge);
+  }
+  if (blueprint.recur) {
+    blueprintRow.appendChild(recurBadge);
+  }
+  blueprintRow.appendChild(createTaskButton);
+  blueprintRow.appendChild(deleteButton);
+
+  const editForm = document.createElement('form');
+  editForm.className = 'task-edit-form';
+  editForm.style.display = 'none';
+
+  let isExpanded = false;
+
+  const toggleEdit = () => {
+    isExpanded = !isExpanded;
+    editForm.style.display = isExpanded ? 'flex' : 'none';
+    li.classList.toggle('expanded', isExpanded);
+  };
+
+  label.addEventListener('click', toggleEdit);
+
+  const durationRow = document.createElement('div');
+  durationRow.className = 'form-row';
+
+  const hasDurationToggle = createToggle('Duration', blueprint.duration !== undefined);
+  const durationPicker = createNumberPicker('days', 1, 365, blueprint.duration || 7);
+  durationPicker.element.style.display = blueprint.duration !== undefined ? 'flex' : 'none';
+
+  hasDurationToggle.onChange((enabled) => {
+    durationPicker.element.style.display = enabled ? 'flex' : 'none';
+  });
+
+  durationRow.appendChild(hasDurationToggle.element);
+  durationRow.appendChild(durationPicker.element);
+
+  const recurRow = document.createElement('div');
+  recurRow.className = 'form-row';
+
+  const recurToggle = createToggle('Recurring', blueprint.recur);
+  recurRow.appendChild(recurToggle.element);
+
+  const saveButton = document.createElement('button');
+  saveButton.type = 'submit';
+  saveButton.className = 'save-button';
+  saveButton.textContent = 'Save';
+
+  editForm.appendChild(durationRow);
+  editForm.appendChild(recurRow);
+  editForm.appendChild(saveButton);
+
+  editForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (blueprint.id === undefined) return;
+
+    try {
+      const hasDuration = hasDurationToggle.getValue();
+      const updates: Partial<Blueprint> = {
+        recur: recurToggle.getValue(),
+      };
+
+      if (hasDuration) {
+        updates.duration = durationPicker.getValue();
+      } else {
+        updates.duration = undefined;
+      }
+
+      await updateBlueprint(blueprint.id, updates);
+      toggleEdit();
+      await onUpdate();
+    } catch (error) {
+      console.error('Failed to update blueprint:', error);
+    }
+  });
+
+  createTaskButton.addEventListener('click', async (e) => {
+    e.stopPropagation();
     if (blueprint.id !== undefined) {
       try {
         await addTodoFromBlueprint(blueprint.id);
@@ -151,12 +213,8 @@ const createBlueprintItem = (
     }
   });
 
-  const deleteButton = document.createElement('button');
-  deleteButton.className = 'delete-button';
-  deleteButton.textContent = '×';
-  deleteButton.setAttribute('aria-label', `Delete "${blueprint.title}"`);
-
-  deleteButton.addEventListener('click', async () => {
+  deleteButton.addEventListener('click', async (e) => {
+    e.stopPropagation();
     if (blueprint.id !== undefined) {
       try {
         await deleteBlueprint(blueprint.id);
@@ -167,15 +225,8 @@ const createBlueprintItem = (
     }
   });
 
-  li.appendChild(label);
-  if (blueprint.duration !== undefined) {
-    li.appendChild(durationBadge);
-  }
-  if (blueprint.recur) {
-    li.appendChild(recurBadge);
-  }
-  li.appendChild(createTaskButton);
-  li.appendChild(deleteButton);
+  li.appendChild(blueprintRow);
+  li.appendChild(editForm);
 
   return li;
 };
