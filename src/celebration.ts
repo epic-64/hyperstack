@@ -9,32 +9,32 @@ interface Particle {
   decay: number;
 }
 
-const colors = [
-  '#ff6b6b',
-  '#4ecdc4',
-  '#45b7d1',
-  '#f9ca24',
-  '#6c5ce7',
-  '#a29bfe',
-  '#fd79a8',
-  '#fdcb6e',
-  '#00b894',
-  '#ff7675',
+const retroColors = [
+  '#FF0040',
+  '#00FFFF',
+  '#FFFF00',
+  '#00FF00',
+  '#FF00FF',
+  '#FF8800',
+  '#0088FF',
+  '#FFFFFF',
 ];
+
+const pixelSizes = [6, 8, 10, 12];
 
 const createParticle = (x: number, y: number): Particle => {
   const angle = Math.random() * Math.PI * 2;
-  const speed = Math.random() * 5 + 3;
+  const speed = Math.random() * 6 + 2;
 
   return {
-    x,
-    y,
+    x: Math.floor(x),
+    y: Math.floor(y),
     vx: Math.cos(angle) * speed,
-    vy: Math.sin(angle) * speed - Math.random() * 3,
-    color: colors[Math.floor(Math.random() * colors.length)],
-    size: Math.random() * 6 + 3,
+    vy: Math.sin(angle) * speed - Math.random() * 2,
+    color: retroColors[Math.floor(Math.random() * retroColors.length)],
+    size: pixelSizes[Math.floor(Math.random() * pixelSizes.length)],
     life: 1,
-    decay: Math.random() * 0.015 + 0.01,
+    decay: Math.random() * 0.012 + 0.008,
   };
 };
 
@@ -43,7 +43,7 @@ const updateParticle = (particle: Particle): Particle => {
     ...particle,
     x: particle.x + particle.vx,
     y: particle.y + particle.vy,
-    vy: particle.vy + 0.3,
+    vy: particle.vy + 0.25,
     life: particle.life - particle.decay,
   };
 };
@@ -52,9 +52,12 @@ const drawParticle = (ctx: CanvasRenderingContext2D, particle: Particle): void =
   ctx.save();
   ctx.globalAlpha = particle.life;
   ctx.fillStyle = particle.color;
-  ctx.beginPath();
-  ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.fillRect(
+    Math.floor(particle.x - particle.size / 2),
+    Math.floor(particle.y - particle.size / 2),
+    particle.size,
+    particle.size
+  );
   ctx.restore();
 };
 
@@ -82,7 +85,9 @@ export const celebrate = (element: HTMLElement): void => {
     return;
   }
 
-  const particleCount = 30;
+  ctx.imageSmoothingEnabled = false;
+
+  const particleCount = 40;
   let particles: Particle[] = [];
 
   for (let i = 0; i < particleCount; i++) {
