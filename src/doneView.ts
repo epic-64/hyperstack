@@ -5,8 +5,12 @@ export const createDoneView = async (): Promise<HTMLElement> => {
   const container = document.createElement('div');
   container.className = 'view-container done-view';
 
+  const header = document.createElement('div');
+  header.className = 'view-header';
+
   const title = document.createElement('h1');
   title.textContent = 'Done';
+  header.appendChild(title);
 
   const todoList = document.createElement('ul');
   todoList.className = 'todo-list done-list';
@@ -30,7 +34,7 @@ export const createDoneView = async (): Promise<HTMLElement> => {
     });
   };
 
-  container.appendChild(title);
+  container.appendChild(header);
   container.appendChild(todoList);
 
   await renderTodos();
