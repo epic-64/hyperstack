@@ -87,9 +87,117 @@ body {
 }
 .add-blueprint-form {
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    gap: 12px;
     margin-bottom: 20px;
+}
+.form-row {
+    display: flex;
+    gap: 10px;
     align-items: center;
+}
+.form-options {
+    flex-wrap: wrap;
+}
+.number-picker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+}
+.number-picker-label {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+}
+.number-picker-button {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+.number-picker-button:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+.number-picker-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+.number-picker-value {
+    min-width: 40px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 16px;
+    font-weight: 500;
+}
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.toggle-label {
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 14px;
+}
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    cursor: pointer;
+}
+.toggle-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+    transition: all 0.3s ease;
+}
+.toggle-slider:before {
+    content: '';
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+.toggle-input:checked + .toggle-slider {
+    background: rgba(100, 200, 255, 0.3);
+    border-color: rgba(100, 200, 255, 0.6);
+}
+.toggle-input:checked + .toggle-slider:before {
+    transform: translateX(22px);
+    background: rgba(100, 200, 255, 1);
+}
+.toggle-switch:hover .toggle-slider {
+    background: rgba(255, 255, 255, 0.15);
+}
+.toggle-input:checked + .toggle-slider:hover {
+    background: rgba(100, 200, 255, 0.4);
 }
 .duration-input {
     width: 80px;
@@ -105,36 +213,6 @@ body {
     outline: none;
     border-color: rgba(255, 255, 255, 0.4);
     background: rgba(255, 255, 255, 0.08);
-}
-.recur-checkbox {
-    display: none;
-}
-.recur-label {
-    width: 44px;
-    height: 44px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 20px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
-}
-.recur-label:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.4);
-}
-.recur-checkbox:checked + .recur-label {
-    background: rgba(100, 200, 255, 0.2);
-    border-color: rgba(100, 200, 255, 0.5);
-    color: rgba(255, 255, 255, 0.9);
-}
-.recur-label + .recur-checkbox {
-    order: -1;
 }
 .todo-input {
     flex: 1;
