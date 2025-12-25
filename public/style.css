@@ -276,7 +276,7 @@ body {
 }
 .todo-item {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 12px;
     padding: 16px;
     background: rgba(255, 255, 255, 0.03);
@@ -288,6 +288,59 @@ body {
 .todo-item:hover {
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.2);
+}
+.todo-item.expanded {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(100, 200, 255, 0.3);
+}
+.task-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+.task-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.edit-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    min-width: 90px;
+}
+.date-input {
+    flex: 1;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 14px;
+    font-family: inherit;
+}
+.date-input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+}
+.save-button {
+    padding: 8px 20px;
+    background: rgba(100, 200, 255, 0.2);
+    border: 1px solid rgba(100, 200, 255, 0.4);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    align-self: flex-start;
+}
+.save-button:hover {
+    background: rgba(100, 200, 255, 0.3);
+    border-color: rgba(100, 200, 255, 0.6);
 }
 .todo-checkbox {
     width: 20px;
@@ -443,6 +496,18 @@ body {
     .pop-button {
         padding: 5px 12px;
         font-size: 13px;
+    }
+    .edit-label {
+        font-size: 13px;
+        min-width: 80px;
+    }
+    .date-input {
+        font-size: 13px;
+        padding: 7px 10px;
+    }
+    .save-button {
+        font-size: 13px;
+        padding: 7px 16px;
     }
     .form-options {
         width: 100%;
