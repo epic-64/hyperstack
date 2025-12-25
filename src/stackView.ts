@@ -1,5 +1,6 @@
 import type { TodoItem } from './db';
 import { addTodo, toggleTodo, deleteTodo, getActiveTodos } from './todos';
+import { celebrate } from './celebration';
 
 export const createStackView = async (): Promise<HTMLElement> => {
   const container = document.createElement('div');
@@ -102,7 +103,11 @@ const createTodoItem = (todo: TodoItem, onUpdate: () => Promise<void>): HTMLElem
   checkbox.addEventListener('change', async () => {
     if (todo.id !== undefined) {
       try {
+        const wasCompleted = todo.completed;
         await toggleTodo(todo.id);
+        if (!wasCompleted) {
+          celebrate(li);
+        }
         await onUpdate();
       } catch (error) {
         console.error('Failed to toggle todo:', error);
