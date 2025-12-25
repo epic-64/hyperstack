@@ -1,12 +1,11 @@
 import { db, type TodoItem } from './db';
 
-export const addTodo = async (title: string): Promise<number> => {
-  const id = await db.todos.add({
+export const addTodo = async (title: string): Promise<void> => {
+  await db.todos.add({
     title,
     completed: false,
     createdAt: Date.now(),
   });
-  return id;
 };
 
 export const toggleTodo = async (id: number): Promise<void> => {
@@ -24,10 +23,12 @@ export const deleteTodo = async (id: number): Promise<void> => {
 };
 
 export const getActiveTodos = async (): Promise<TodoItem[]> => {
-  return await db.todos.where('completed').equals(0).sortBy('createdAt');
+  const todos = await db.todos.orderBy('createdAt').toArray();
+  return todos.filter(todo => !todo.completed);
 };
 
 export const getCompletedTodos = async (): Promise<TodoItem[]> => {
-  return await db.todos.where('completed').equals(1).reverse().sortBy('completedAt');
+  const todos = await db.todos.orderBy('completedAt').reverse().toArray();
+  return todos.filter(todo => todo.completed);
 };
 
