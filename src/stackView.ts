@@ -83,16 +83,8 @@ const createTodoItem = (todo: TodoItem, onUpdate: () => Promise<void>): HTMLElem
   li.className = 'todo-item';
   li.setAttribute('role', 'listitem');
 
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.className = 'todo-checkbox';
-  checkbox.checked = todo.completed;
-  checkbox.id = `todo-${todo.id}`;
-  checkbox.setAttribute('aria-label', `Mark "${todo.title}" as ${todo.completed ? 'incomplete' : 'complete'}`);
-
-  const label = document.createElement('label');
+  const label = document.createElement('span');
   label.className = 'todo-label';
-  label.htmlFor = `todo-${todo.id}`;
   label.textContent = todo.title;
 
   const durationBadge = document.createElement('span');
@@ -108,23 +100,24 @@ const createTodoItem = (todo: TodoItem, onUpdate: () => Promise<void>): HTMLElem
     }
   }
 
+  const popButton = document.createElement('button');
+  popButton.className = 'pop-button';
+  popButton.textContent = 'Pop';
+  popButton.setAttribute('aria-label', `Complete "${todo.title}"`);
+
   const deleteButton = document.createElement('button');
   deleteButton.className = 'delete-button';
   deleteButton.textContent = '×';
   deleteButton.setAttribute('aria-label', `Delete "${todo.title}"`);
 
-  checkbox.addEventListener('change', async () => {
+  popButton.addEventListener('click', async () => {
     if (todo.id !== undefined) {
       try {
-        const wasCompleted = todo.completed;
         await toggleTodo(todo.id);
-        if (!wasCompleted) {
-          celebrate(li);
-        }
+        celebrate(li);
         await onUpdate();
       } catch (error) {
-        console.error('Failed to toggle todo:', error);
-        checkbox.checked = !checkbox.checked;
+        console.error('Failed to complete todo:', error);
       }
     }
   });
@@ -140,11 +133,11 @@ const createTodoItem = (todo: TodoItem, onUpdate: () => Promise<void>): HTMLElem
     }
   });
 
-  li.appendChild(checkbox);
   li.appendChild(label);
   if (todo.duration !== undefined && todo.endDate !== undefined) {
     li.appendChild(durationBadge);
   }
+  li.appendChild(popButton);
   li.appendChild(deleteButton);
 
   return li;
