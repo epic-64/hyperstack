@@ -347,6 +347,26 @@ body {
     border-color: rgba(100, 200, 255, 0.5);
     color: rgba(255, 255, 255, 0.9);
 }
+.pop-button {
+    padding: 6px 16px;
+    background: rgba(100, 200, 255, 0.2);
+    border: 1px solid rgba(100, 200, 255, 0.4);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+.pop-button:hover {
+    background: rgba(100, 200, 255, 0.3);
+    border-color: rgba(100, 200, 255, 0.6);
+    transform: scale(1.05);
+}
+.pop-button:active {
+    transform: scale(0.95);
+}
 .empty-state {
     text-align: center;
     color: rgba(255, 255, 255, 0.4);
@@ -419,6 +439,10 @@ body {
     }
     .todo-label {
         font-size: 14px;
+    }
+    .pop-button {
+        padding: 5px 12px;
+        font-size: 13px;
     }
     .form-options {
         width: 100%;
