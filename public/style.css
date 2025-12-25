@@ -342,6 +342,38 @@ body {
     .todo-label {
         font-size: 14px;
     }
+    .form-options {
+        width: 100%;
+    }
+    .number-picker {
+        padding: 6px 10px;
+    }
+    .number-picker-label {
+        font-size: 13px;
+    }
+    .number-picker-button {
+        width: 28px;
+        height: 28px;
+        font-size: 18px;
+    }
+    .number-picker-value {
+        min-width: 32px;
+        font-size: 14px;
+    }
+    .toggle-label {
+        font-size: 13px;
+    }
+    .toggle-switch {
+        width: 44px;
+        height: 24px;
+    }
+    .toggle-slider:before {
+        height: 16px;
+        width: 16px;
+    }
+    .toggle-input:checked + .toggle-slider:before {
+        transform: translateX(20px);
+    }
     .duration-input {
         width: 60px;
         font-size: 14px;
