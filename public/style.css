@@ -15,23 +15,30 @@
 * {
     box-sizing: border-box;
 }
-body {
+html, body {
     margin: 0;
     padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+body {
     min-width: 320px;
-    min-height: 100vh;
     background-color: #0a0a0a;
 }
 #app {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 .navigation {
     display: flex;
     gap: 0;
     margin-bottom: 30px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
 }
 .nav-item {
     flex: 1;
@@ -52,11 +59,21 @@ body {
     color: rgba(255, 255, 255, 1);
     border-bottom-color: rgba(255, 255, 255, 0.8);
 }
+#view-container {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
 .view-container {
-    min-height: 400px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 .view-header {
     margin-bottom: 30px;
+    flex-shrink: 0;
 }
 .view-container h1 {
     font-size: 32px;
@@ -109,8 +126,24 @@ body {
 }
 .todo-list {
     list-style: none;
-    padding: 0;
+    padding: 0 8px 0 0;
     margin: 0;
+    overflow-y: auto;
+    flex: 1;
+}
+.todo-list::-webkit-scrollbar {
+    width: 8px;
+}
+.todo-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+.todo-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+.todo-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 .todo-item {
     display: flex;
