@@ -1,5 +1,5 @@
 import type { TodoItem } from './db';
-import { addTodo, toggleTodo, deleteTodo, getActiveTodos } from './todos';
+import { addTodo, toggleTodo, getActiveTodos } from './todos';
 import { celebrate } from './celebration';
 
 export const createStackView = async (): Promise<HTMLElement> => {
@@ -105,11 +105,6 @@ const createTodoItem = (todo: TodoItem, onUpdate: () => Promise<void>): HTMLElem
   popButton.textContent = 'Pop';
   popButton.setAttribute('aria-label', `Complete "${todo.title}"`);
 
-  const deleteButton = document.createElement('button');
-  deleteButton.className = 'delete-button';
-  deleteButton.textContent = '×';
-  deleteButton.setAttribute('aria-label', `Delete "${todo.title}"`);
-
   popButton.addEventListener('click', async () => {
     if (todo.id !== undefined) {
       try {
@@ -122,23 +117,11 @@ const createTodoItem = (todo: TodoItem, onUpdate: () => Promise<void>): HTMLElem
     }
   });
 
-  deleteButton.addEventListener('click', async () => {
-    if (todo.id !== undefined) {
-      try {
-        await deleteTodo(todo.id);
-        await onUpdate();
-      } catch (error) {
-        console.error('Failed to delete todo:', error);
-      }
-    }
-  });
-
   li.appendChild(label);
   if (todo.duration !== undefined && todo.endDate !== undefined) {
     li.appendChild(durationBadge);
   }
   li.appendChild(popButton);
-  li.appendChild(deleteButton);
 
   return li;
 };
